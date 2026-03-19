@@ -1,0 +1,134 @@
+#include <iostream>
+#include <typeinfo>
+using namespace std;
+
+class employee {
+protected:
+    int empId;
+    double salary;
+public:
+    employee() : empId(0), salary(0.0) {}
+    employee(int empId, double salary) : empId(empId), salary(salary) {}
+    
+    virtual ~employee() {} 
+
+    virtual void accept() {
+        cout << "Employee ID : "; cin >> empId;
+        cout << "Salary : "; cin >> salary;
+    }
+
+    virtual void display() {
+        cout << "Employee ID : " << empId << endl;
+        cout << "Salary : " << salary << endl;
+    }
+};
+
+class manager : virtual public employee {
+protected:
+    double bonus;
+public:
+    manager() : employee(), bonus(0.0) {}
+    
+    void accept() {
+        employee::accept();
+        acceptmanager();
+    }
+
+    void acceptmanager() {
+        cout << "Bonus : "; cin >> bonus;
+    }
+
+    void display()  {
+        employee::display();
+        cout << "Bonus : " << bonus << endl;
+    }
+};
+
+class salesman : virtual public employee {
+protected:
+    double commission;
+public:
+    salesman() : employee(), commission(0.0) {}
+
+    void accept() {
+        employee::accept();
+        acceptsalesman();
+    }
+
+    void acceptsalesman() {
+        cout << "Commission : "; cin >> commission;
+    }
+
+    void display()  {
+        employee::display();
+        cout << "Commission : " << commission << endl;
+    }
+};
+
+class salesmanager : public manager, public salesman {
+public:
+    salesmanager() : employee(), manager(), salesman() {}
+
+    void accept()  {
+        employee::accept();
+        acceptmanager();
+        acceptsalesman();
+    }
+
+    void display()  {
+        employee::display();
+        cout << "Bonus : " << bonus << endl;
+        cout << "Commission : " << commission << endl;
+    }
+};
+
+int main() {
+    int choice;
+    employee *arr[100];
+    int count = 0;
+
+    do {
+        cout << "\n1. Add Manager\n2. Add Salesman\n3. Add Salesmanager\n4. Display Counts\n5. Display All Managers\n6. Display All Salesman\n7. Display All SalesManagers\n8. Exit\nChoice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                arr[count] = new manager();
+                arr[count++]->accept();
+                break;
+            case 2:
+                arr[count] = new salesman();
+                arr[count++]->accept();
+                break;
+            case 3:
+                arr[count] = new salesmanager();
+                arr[count++]->accept();
+                break;
+            case 4: {
+                int mC = 0, sC = 0, smC = 0;
+                for(int i = 0; i < count; i++) {
+                    if(dynamic_cast<salesmanager*>(arr[i])) smC++;
+                    else if(dynamic_cast<manager*>(arr[i])) mC++;
+                    else if(dynamic_cast<salesman*>(arr[i])) sC++;
+                }
+                cout << "Managers: " << mC << "\nSalesmen: " << sC << "\nSales Managers: " << smC << endl;
+                break;
+            }
+            case 5:
+                for(int i = 0; i < count; i++)
+                    if(dynamic_cast<manager*>(arr[i]) && !dynamic_cast<salesmanager*>(arr[i])) arr[i]->display();
+                break;
+            case 6:
+                for(int i = 0; i < count; i++)
+                    if(dynamic_cast<salesman*>(arr[i]) && !dynamic_cast<salesmanager*>(arr[i])) arr[i]->display();
+                break;
+            case 7:
+                for(int i = 0; i < count; i++)
+                    if(dynamic_cast<salesmanager*>(arr[i])) arr[i]->display();
+                break;
+        }
+    } while (choice != 8);
+
+    for(int i = 0; i < count; i++) delete arr[i];
+    return 0;
+}

@@ -1,0 +1,137 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Product
+{
+protected:
+    int id;
+    string title;
+    double price;
+
+public:
+    Product(int id, string title, double price)
+    {
+        this->id = id;
+        this->title = title;
+        this->price = price;
+    }
+    virtual ~Product()
+    {
+        cout << "Cleaning up Product resources..." << endl;
+    }
+    virtual void accept()
+    {
+        cout << "Enter ID: ";
+        cin >> id;
+        cout << "Enter Title: ";
+        cin >> title;
+        cout << "Enter Price: ";
+        cin >> price;
+    }
+    virtual void printRecord()
+    {
+        cout << "ID: " << id << endl;
+        cout << "Title: " << title << endl;
+        cout << "Price: " << price << endl;
+    }
+    virtual double calculateBill() = 0;
+};
+
+class Book : public Product
+{
+    string author;
+
+public:
+    Book() : Product(0, "", 0.0), author("") {}
+    Book(int id, string title, string author, double price)
+        : Product(id, title, price), author(author) {}
+
+    void accept()
+    {
+        Product::accept();
+        cout << "Enter Author: ";
+        cin >> author;
+    }
+    double calculateBill()
+    {
+        return price - (price * 0.10);
+    }
+};
+
+class Tape : public Product
+{
+    string artist;
+
+public:
+    Tape() : Product(0, "", 0.0), artist("") {}
+    Tape(int id, string title, string artist, double price)
+        : Product(id, title, price), artist(artist) {}
+
+    void accept()
+    {
+        Product::accept();
+        cout << "Enter Artist: ";
+        cin >> artist;
+    }
+    double calculateBill()
+    {
+        return price - (price * 0.05);
+    }
+};
+int menuList(void)
+{
+    int choice;
+    cout << "0.Exit" << endl;
+    cout << "1. Book (10% Discount)" << endl;
+    cout << "2. Tape (5% Discount)" << endl;
+    cout << "Enter the choice : ";
+    cin >> choice;
+    return choice;
+}
+
+int main()
+{
+    Product *arr[3];
+    double totalBill = 0.0;
+    int choice;
+    for (int i = 0; i < 3; i++)
+    {
+        cout << "\n--- Purchase Item " << (i + 1) << " ---" << endl;
+        choice = menuList();
+
+        switch (choice)
+        {
+        case 0:
+            cout << "Exiting the purchase process." << endl;
+            arr[i] = nullptr;
+            break;
+        case 1:
+            arr[i] = new Book();
+            arr[i]->accept();
+            break;
+        case 2:
+            arr[i] = new Tape();
+            arr[i]->accept();
+            break;
+        default:
+            cout << "Invalid choice. Skipping item." << endl;
+            arr[i] = nullptr;
+        }
+    }
+    cout << "\n--- Final Bill Summary ---" << endl;
+    for (int i = 0; i < 3; i++)
+    {
+        double itemTotal = arr[i]->calculateBill();
+        totalBill += itemTotal;
+        cout << "Item " << (i + 1) << " Price after discount: " << itemTotal << endl;
+    }
+
+    cout << "\nTotal Payable Amount: " << totalBill << endl;
+
+    for (int i = 0; i < 3; i++)
+    {
+        delete arr[i];
+    }
+    return 0;
+}

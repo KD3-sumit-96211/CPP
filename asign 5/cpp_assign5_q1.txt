@@ -1,0 +1,125 @@
+#include <iostream>
+using namespace std;
+class Date
+{
+private:
+    int day;
+    int month;
+    int year;
+
+public:
+    Date(void) : day(0), month(0), year(0) {}
+    Date(int day, int month, int year) : day(day), month(month), year(year) {}
+    void accept()
+    {
+        cout << "day: ";
+        cin >> day;
+        cout << "month: ";
+        cin >> month;
+        cout << "year: ";
+        cin >> year;
+    }
+    void display()
+    {
+        cout << day << "/" << month << "/" << year << endl;
+    }
+    ~Date()
+    {
+        cout << "Date object destroyed" << endl;
+    }
+};
+class person
+{
+private:
+    string name;
+    string address;
+    Date *dob; // Association (loose coupling)
+public:
+    person(void) : name(""), address("")
+    {
+        dob = nullptr;
+    }
+    person(string name, string address, Date *dob) : name(name), address(address), dob(dob) {}
+    void accept()
+    {
+        cout << "name: ";
+        cin >> name;
+        cout << "address: ";
+        cin >> address;
+        cout << "Date of Birth: " << endl;
+        dob = new Date();
+        dob->accept();
+        cout << "------------------------------" << endl;
+    }
+    void display()
+    {
+        cout << "Name: " << name << endl;
+        cout << "Address: " << address << endl;
+        if (dob != nullptr)
+        {
+            cout << "Date of Birth: ";
+            dob->display();
+        }
+        cout << "------------------------------" << endl;
+    }
+    ~person()
+    {
+        cout << "Person object destroyed" << endl;
+        delete dob;
+        dob = nullptr;
+    }
+};
+class student
+{
+private:
+    int id;
+    double marks;
+    string course;
+    Date joinDate; // Association (tight coupling)
+    Date endDate;  // Association (tight coupling)
+
+public:
+    student(void) : id(0), marks(0.0), course("") {}
+    student(int id, double marks, string course, Date joinDate, Date endDate) : id(id), marks(marks), course(course), joinDate(joinDate), endDate(endDate) {}
+    void accept()
+    {
+        cout << "id: ";
+        cin >> id;
+        cout << "marks: ";
+        cin >> marks;
+        cout << "course: ";
+        cin >> course;
+        cout << "Join Date: " << endl;
+        joinDate.accept();
+        cout << "End Date: " << endl;
+        endDate.accept();
+        cout << "------------------------------" << endl;
+    }
+    void display()
+    {
+        cout << "ID: " << id << endl;
+        cout << "Marks: " << marks << endl;
+        cout << "Course: " << course << endl;
+        cout << "Join Date: ";
+        joinDate.display();
+        cout << "End Date: ";
+        endDate.display();
+        cout << "------------------------------" << endl;
+    }
+    ~student()
+    {
+        cout << "Student object destroyed" << endl;
+    }
+};
+int main()
+{
+    person p1;
+    p1.accept();
+    p1.display();
+
+    student s1;
+    s1.accept();
+    s1.display();
+
+    return 0;
+}
